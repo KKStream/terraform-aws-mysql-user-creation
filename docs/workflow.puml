@@ -1,0 +1,21 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+
+participant Terraform
+participant Lambda
+database "Secrets Manager - Administrator" as smAdmin
+database "Secrets Manager - New User" as smUser
+database MySQL
+
+autonumber
+
+Terraform -> smAdmin: Create Secrets Manager for Admin user and \nsave admin username/password to the secrets manager.
+Terraform -> smUser: Create Secrets Manager for new user and \nsave new user's username/password to the secrets manager
+Terraform -> Lambda: Invoke Lamda Function
+Lambda <- smAdmin: Get Admin username/password from "Secrets Manager - Administrator"
+Lambda <- smUser: Get Admin username/password from "Secrets Manager - New User"
+Lambda -> MySQL: Use Admin username/password login
+Lambda -> MySQL: Create "New User" and give DB privileges to the user
+Lambda -> MySQL: Use "New User" username/password login for validation the result.
+@enduml
